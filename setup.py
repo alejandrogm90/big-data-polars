@@ -29,8 +29,9 @@ import src.commons.common_functions as cf
 FILE_LOOGER = os.path.normpath('config/logging.conf')
 FILE_LOG = os.path.normpath("log/" + cf.getFiletName(sys.argv[0]) + ".log")
 logging.config.fileConfig(FILE_LOOGER)
-LOGGER = logging.getLogger('testLogger')
+LOGGER = logging.getLogger('mainLogger')
 today = datetime.date.today()
+DATA_SOURCE = "data/iris.csv"
 
 if __name__ == '__main__':
     # Add Banner
@@ -39,17 +40,17 @@ if __name__ == '__main__':
     info = {
         "name": cf.getFiletName(os.path.realpath(__file__), True),
         "location": os.path.dirname(os.path.realpath(__file__)),
-        "description": "Basic Python3 template",
+        "description": "Big Data example with polars ",
         "Autor": "Alejandro Gómez",
         "calling": sys.argv[0] + " parameters"
     }
     cf.showScriptInfo(info)
 
-    q = (pl.scan_csv("data/iris.csv").filter(pl.col("sepal_length") > 5).group_by("species").agg(
-        pl.col("sepal_width").mean()))
-
-    df = q.collect()
-
-    cf.infoMsg(LOGGER, str(df), FILE_LOG)
-
-    print(df)
+    # Load data from file
+    if not os.path.exists(DATA_SOURCE):
+        cf.errorMsg(LOGGER, 1, "File {0} do not exists.".format(DATA_SOURCE), FILE_LOG)
+    else:
+        q = (pl.scan_csv(DATA_SOURCE).filter(pl.col("sepal_length") > 5).group_by("species").agg(
+            pl.col("sepal_width").mean()))
+        df = q.collect()
+        cf.infoMsg(LOGGER, str(df), FILE_LOG)
