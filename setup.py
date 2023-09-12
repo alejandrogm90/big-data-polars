@@ -16,10 +16,13 @@
 #       You should have received a copy of the GNU General Public License
 #       along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import os
 import datetime
 import logging.config
+import os
+import sys
+
+import polars as pl
+
 import src.commons.common_functions as cf
 
 # GLOBALS
@@ -42,5 +45,11 @@ if __name__ == '__main__':
     }
     cf.showScriptInfo(info)
 
-    cf.infoMsg(LOGGER, "info menssage")
-    cf.errorMsg(LOGGER, 0, "ERROR example")
+    q = (pl.scan_csv("data/iris.csv").filter(pl.col("sepal_length") > 5).group_by("species").agg(
+        pl.col("sepal_width").mean()))
+
+    df = q.collect()
+
+    cf.infoMsg(LOGGER, str(df), FILE_LOG)
+
+    print(df)

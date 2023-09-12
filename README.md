@@ -6,14 +6,16 @@
 [![License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-# Python3_template
-Basic Python3 template
+# Bib-Data polars
+Big Data example with polars library
 
 ### Built With
 
 Frameworks and libraries used to bootstrap the project:
 
 * [![Python][python-shield]][python-url]
+* Official library [Polars](https://www.pola.rs/)
+* Data source form [Iris DB](https://archive.ics.uci.edu/dataset/53/iris)
 
 ## Getting Started
 
