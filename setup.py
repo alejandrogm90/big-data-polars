@@ -50,7 +50,20 @@ if __name__ == '__main__':
     if not os.path.exists(DATA_SOURCE):
         cf.errorMsg(LOGGER, 1, "File {0} do not exists.".format(DATA_SOURCE), FILE_LOG)
     else:
+        # Example 1
+        cf.infoMsg(LOGGER, "Example 1", FILE_LOG)
         q = (pl.scan_csv(DATA_SOURCE).filter(pl.col("sepal_length") > 5).group_by("species").agg(
             pl.col("sepal_width").mean()))
         df = q.collect()
         cf.infoMsg(LOGGER, str(df), FILE_LOG)
+        # Example 2
+        cf.infoMsg(LOGGER, "Example 2", FILE_LOG)
+        q_2 = (pl.scan_csv(DATA_SOURCE).select((pl.col("species"), pl.col("sepal_length")))
+               .filter(pl.col("sepal_length") > 7))
+        df_2 = q_2.collect()
+        cf.infoMsg(LOGGER, str(df_2), FILE_LOG)
+        # Example 3
+        cf.infoMsg(LOGGER, "Example 3", FILE_LOG)
+        q_3 = pl.scan_csv(DATA_SOURCE).select(( pl.col("species"), pl.col("species").count().alias("Total") )).unique()
+        df_3 = q_3.collect()
+        cf.infoMsg(LOGGER, str(df_3), FILE_LOG)
