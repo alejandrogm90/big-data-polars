@@ -45,7 +45,7 @@ $ pip install -r requirements.txt
 On terminal:
 
 ```shell
-$ ./setup.py
+$ pienv run python setup.py
 ```
 
 _For more examples, please refer to the [Documentation]([wiki-url])_
