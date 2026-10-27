@@ -64,6 +64,23 @@ if __name__ == '__main__':
         cf.infoMsg(LOGGER, str(df_2), FILE_LOG)
         # Example 3
         cf.infoMsg(LOGGER, "Example 3", FILE_LOG)
-        q_3 = pl.scan_csv(DATA_SOURCE).select(( pl.col("species"), pl.col("species").count().alias("Total") )).unique()
+        q_3 = pl.scan_csv(DATA_SOURCE).select((pl.col("species"), pl.col("species").count().alias("Total") )).unique()
         df_3 = q_3.collect()
         cf.infoMsg(LOGGER, str(df_3), FILE_LOG)
+        # Example 4
+        cf.infoMsg(LOGGER, "Example 4", FILE_LOG)
+        q4 = (
+            pl.scan_csv(DATA_SOURCE)
+            .group_by("species")
+            .agg(
+                pl.col("sepal_length").sum(),
+                pl.col("sepal_width").sum(),
+                pl.col("petal_length").sum(),
+                pl.col("petal_width").sum(),
+            ).sort("species", descending=True)
+        )
+        resultado = q4.collect()
+        df_4 = q4.collect()
+        cf.infoMsg(LOGGER, str(df_4), FILE_LOG)
+        # Write the result to a CSV file
+        #df_4.write_csv("data/iris_summary.csv")
