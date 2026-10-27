@@ -33,6 +33,49 @@ LOGGER = logging.getLogger('mainLogger')
 today = datetime.date.today()
 DATA_SOURCE = "data/iris.csv"
 
+
+def build_example_1_query(data_source=DATA_SOURCE):
+    return (
+        pl.scan_csv(data_source)
+        .filter(pl.col("sepal_length") > 5)
+        .group_by("species")
+        .agg(pl.col("sepal_width").mean())
+    )
+
+
+def build_example_2_query(data_source=DATA_SOURCE):
+    return (
+        pl.scan_csv(data_source)
+        .select(pl.col("species"), pl.col("sepal_length"))
+        .filter(pl.col("sepal_length") > 7)
+    )
+
+
+def build_example_3_query(data_source=DATA_SOURCE):
+    return (
+        pl.scan_csv(data_source)
+        .select(
+            pl.col("species"),
+            pl.col("species").count().alias("Total"),
+        )
+        .unique()
+    )
+
+
+def build_example_4_query(data_source=DATA_SOURCE):
+    return (
+        pl.scan_csv(data_source)
+        .group_by("species")
+        .agg(
+            pl.col("sepal_length").sum(),
+            pl.col("sepal_width").sum(),
+            pl.col("petal_length").sum(),
+            pl.col("petal_width").sum(),
+        )
+        .sort("species", descending=True)
+    )
+
+
 if __name__ == '__main__':
     # Add Banner
     cf.printMegaBanner(cf.getFiletName(sys.argv[0], True))
@@ -52,33 +95,22 @@ if __name__ == '__main__':
     else:
         # Example 1
         cf.infoMsg(LOGGER, "Example 1", FILE_LOG)
-        q = (pl.scan_csv(DATA_SOURCE).filter(pl.col("sepal_length") > 5).group_by("species").agg(
-            pl.col("sepal_width").mean()))
+        q = build_example_1_query()
         df = q.collect()
         cf.infoMsg(LOGGER, str(df), FILE_LOG)
         # Example 2
         cf.infoMsg(LOGGER, "Example 2", FILE_LOG)
-        q_2 = (pl.scan_csv(DATA_SOURCE).select((pl.col("species"), pl.col("sepal_length")))
-               .filter(pl.col("sepal_length") > 7))
+        q_2 = build_example_2_query()
         df_2 = q_2.collect()
         cf.infoMsg(LOGGER, str(df_2), FILE_LOG)
         # Example 3
         cf.infoMsg(LOGGER, "Example 3", FILE_LOG)
-        q_3 = pl.scan_csv(DATA_SOURCE).select((pl.col("species"), pl.col("species").count().alias("Total") )).unique()
+        q_3 = build_example_3_query()
         df_3 = q_3.collect()
         cf.infoMsg(LOGGER, str(df_3), FILE_LOG)
         # Example 4
         cf.infoMsg(LOGGER, "Example 4", FILE_LOG)
-        q4 = (
-            pl.scan_csv(DATA_SOURCE)
-            .group_by("species")
-            .agg(
-                pl.col("sepal_length").sum(),
-                pl.col("sepal_width").sum(),
-                pl.col("petal_length").sum(),
-                pl.col("petal_width").sum(),
-            ).sort("species", descending=True)
-        )
+        q4 = build_example_4_query()
         resultado = q4.collect()
         df_4 = q4.collect()
         cf.infoMsg(LOGGER, str(df_4), FILE_LOG)

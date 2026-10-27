@@ -5,6 +5,7 @@
 [![Issues][issues-shield]][issues-url]
 [![License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
+![Tests](https://github.com/alejandrogm90/big-data-polars/actions/workflows/tests.yml/badge.svg)
 
 # Bib-Data polars
 Big Data example with polars library
@@ -30,25 +31,43 @@ You need install first:
 
 ### Installation
 
-- Go to main project at https://github.com/alejandrogm90/coin-comparator
+- Go to main project at https://github.com/alejandrogm90/big-data-polars
 - Clone the repo:
 ```shell
-git clone https://github.com/alejandrogm90/coin-comparator.git
+git clone https://github.com/alejandrogm90/big-data-polars.git
 ```
 
 - Install all requirements:
 ```shell
 pip install -r requirements.txt
 ```
+or use pipenv:
+```shell
+pipenv install
+```
 
 ## Usage
 On terminal:
 
 ```shell
+python setup.py
+```
+or using pipenv:
+```shell
 pipenv run python setup.py
 ```
 
 _For more examples, please refer to the [Documentation]([wiki-url])_
+
+## Tests
+To run tests, run the following command:
+```shell
+python -m unittest discover -v
+```
+or using pipenv:
+```shell
+pipenv run python -m unittest discover -v
+```
 
 ## Contributing
 
@@ -70,7 +89,7 @@ Distributed under the License. See `LICENSE.txt` for more information.
 
 Alejandro Gómez - [@alejandrogm90](https://github.com/alejandrogm90)
 
-Project Link: https://github.com/alejandrogm90/coin-comparator
+Project Link: https://github.com/alejandrogm90/big-data-polars
 
 <!--
 pip freeze > requirements.txt
@@ -78,20 +97,20 @@ pipreqs --force
 -->
 
 [version-shield]: https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge
-[contributors-shield]: https://img.shields.io/github/contributors/alejandrogm90/coin-comparator.svg?style=for-the-badge
-[forks-shield]: https://img.shields.io/github/forks/alejandrogm90/coin-comparator.svg?style=for-the-badge
-[stars-shield]: https://img.shields.io/github/stars/alejandrogm90/coin-comparator.svg?style=for-the-badge
-[issues-shield]: https://img.shields.io/github/issues/alejandrogm90/coin-comparator.svg?style=for-the-badge
-[license-shield]: https://img.shields.io/github/license/alejandrogm90/coin-comparator.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/alejandrogm90/big-data-polars.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/alejandrogm90/big-data-polars.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/alejandrogm90/big-data-polars.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/alejandrogm90/big-data-polars.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/alejandrogm90/big-data-polars.svg?style=for-the-badge
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [python-shield]: https://img.shields.io/badge/python-000000?style=for-the-badge&logo=python&logoColor=white
 
-[project-url]: https://github.com/alejandrogm90/coin-comparator/
-[wiki-url]: https://github.com/alejandrogm90/coin-comparator/wiki
-[contributors-url]: https://github.com/alejandrogm90/coin-comparator/graphs/contributors
-[forks-url]: https://github.com/alejandrogm90/coin-comparator/network/members
-[stars-url]: https://github.com/alejandrogm90/coin-comparator/stargazers
-[issues-url]: https://github.com/alejandrogm90/coin-comparator/issues
-[license-url]: https://github.com/alejandrogm90/coin-comparator/blob/master/LICENSE.txt
+[project-url]: https://github.com/alejandrogm90/big-data-polars/
+[wiki-url]: https://github.com/alejandrogm90/big-data-polars/wiki
+[contributors-url]: https://github.com/alejandrogm90/big-data-polars/graphs/contributors
+[forks-url]: https://github.com/alejandrogm90/big-data-polars/network/members
+[stars-url]: https://github.com/alejandrogm90/big-data-polars/stargazers
+[issues-url]: https://github.com/alejandrogm90/big-data-polars/issues
+[license-url]: https://github.com/alejandrogm90/big-data-polars/blob/master/LICENSE.txt
 [linkedin-url]: https://www.linkedin.com/in/alejandro-g-762869129/
 [python-url]: https://www.python.org/

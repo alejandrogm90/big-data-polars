@@ -1,0 +1,43 @@
+name: Django Tests
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+  pull_request:
+    branches:
+      - development
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Ejecutar tests
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v5
+
+      - name: Configurar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+
+      - name: Instalar dependencias
+        run: |
+          pipenv install --dev
+
+      - name: Ejecutar tests
+        run: |
+          pipenv run python -m unittest discover -v
