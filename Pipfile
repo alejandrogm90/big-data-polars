@@ -5,7 +5,6 @@ name = "big-data-polars"
 
 [packages]
 polars = "*"
-pyfiglet = "*"
 
 [dev-packages]
 

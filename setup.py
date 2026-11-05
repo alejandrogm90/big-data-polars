@@ -27,7 +27,7 @@ import src.commons.common_functions as cf
 
 # GLOBALS
 FILE_LOOGER = os.path.normpath('config/logging.conf')
-FILE_LOG = os.path.normpath("log/" + cf.getFiletName(sys.argv[0]) + ".log")
+FILE_LOG = os.path.normpath("log/" + cf.get_file_name(sys.argv[0]) + ".log")
 logging.config.fileConfig(FILE_LOOGER)
 LOGGER = logging.getLogger('mainLogger')
 today = datetime.date.today()
@@ -77,42 +77,40 @@ def build_example_4_query(data_source=DATA_SOURCE):
 
 
 if __name__ == '__main__':
-    # Add Banner
-    cf.printMegaBanner(cf.getFiletName(sys.argv[0], True))
     # Show script info
     info = {
-        "name": cf.getFiletName(os.path.realpath(__file__), True),
+        "name": cf.get_file_name(os.path.realpath(__file__), True),
         "location": os.path.dirname(os.path.realpath(__file__)),
         "description": "Big Data example with polars ",
         "Autor": "Alejandro Gómez",
         "calling": sys.argv[0] + " parameters"
     }
-    cf.showScriptInfo(info)
+    cf.show_script_info(info)
 
     # Load data from file
     if not os.path.exists(DATA_SOURCE):
-        cf.errorMsg(LOGGER, 1, "File {0} do not exists.".format(DATA_SOURCE), FILE_LOG)
+        cf.error_msg(1, "File {0} do not exists.".format(DATA_SOURCE), FILE_LOG)
     else:
         # Example 1
-        cf.infoMsg(LOGGER, "Example 1", FILE_LOG)
+        cf.info_msg("Example 1", FILE_LOG)
         q = build_example_1_query()
         df = q.collect()
-        cf.infoMsg(LOGGER, str(df), FILE_LOG)
+        cf.info_msg(str(df), FILE_LOG)
         # Example 2
-        cf.infoMsg(LOGGER, "Example 2", FILE_LOG)
+        cf.info_msg("Example 2", FILE_LOG)
         q_2 = build_example_2_query()
         df_2 = q_2.collect()
-        cf.infoMsg(LOGGER, str(df_2), FILE_LOG)
+        cf.info_msg(str(df_2), FILE_LOG)
         # Example 3
-        cf.infoMsg(LOGGER, "Example 3", FILE_LOG)
+        cf.info_msg("Example 3", FILE_LOG)
         q_3 = build_example_3_query()
         df_3 = q_3.collect()
-        cf.infoMsg(LOGGER, str(df_3), FILE_LOG)
+        cf.info_msg(str(df_3), FILE_LOG)
         # Example 4
-        cf.infoMsg(LOGGER, "Example 4", FILE_LOG)
+        cf.info_msg("Example 4", FILE_LOG)
         q4 = build_example_4_query()
         resultado = q4.collect()
         df_4 = q4.collect()
-        cf.infoMsg(LOGGER, str(df_4), FILE_LOG)
+        cf.info_msg(str(df_4), FILE_LOG)
         # Write the result to a CSV file
         #df_4.write_csv("data/iris_summary.csv")

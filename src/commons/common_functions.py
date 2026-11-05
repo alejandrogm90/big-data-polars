@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 #
-#       Copyright 2023 Alejandro Gomez
+#       Copyright 2022 Alejandro Gomez
 #
 #       This program is free software: you can redistribute it and/or modify
 #       it under the terms of the GNU General Public License as published by
@@ -16,40 +16,92 @@
 #       You should have received a copy of the GNU General Public License
 #       along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import json
-import pyfiglet
+import logging
+import os
 from calendar import monthrange
+import sys
 from time import gmtime, strftime
 
+logging.basicConfig(format='[%(asctime)s][%(levelname)s]%(message)s',
+                    datefmt='%Y-%d-%m %H:%M:%S', level=logging.INFO)
+LOGGER = logging
 SEPARATOR_1 = "###############################################################################################"
 PROJECT_PATH = ""
 
 
-def cargar_json(path):
+def get_head_line(level: str) -> str:
+    """ Returns log format headline
+
+    :return: string log format
+    """
+    return "[" + get_time() + "][" + level + "]"
+
+
+def info_msg(msg: str, output_file="") -> None:
+    """ Show a menssage text
+
+    :param msg: info menssage
+    :param output_file: output file
+    """
+    LOGGER.info(f": {msg}")
+    if output_file != "":
+        print_log_in_file(output_file, f"{get_head_line('INFO')}: {msg}")
+
+
+def warn_msg(msg: str, output_file="") -> None:
+    """ Show a menssage text
+
+    :param msg: warning menssage
+    :param output_file: output file
+    """
+    LOGGER.warning(f": {msg}")
+    if output_file != "":
+        print_log_in_file(output_file, f"{get_head_line('WARNING')}: {msg}")
+
+
+def error_msg(number: int, msg: str, output_file="") -> None:
+    """ Show a menssage text and exits with output number
+
+    :param number: output number
+    :param msg: error menssage
+    :param output_file: output file
+    """
+    LOGGER.error(f"[{number}]: {msg}")
+    if output_file != "":
+        print_log_in_file(
+            output_file, f"{get_head_line('ERROR')}[{number}]: {msg}")
+    sys.exit(number)
+
+
+def load_json(file_path: str) -> dict:
     """ Load a json file
-    :param path: full path
+
+    :param file_path: full path
     :return: json data
     """
-    with open(path, 'r') as f1:
+    with open(file_path, "r", encoding="utf-8") as f1:
         data = json.load(f1)
     f1.close()
     return data
 
 
-def load_config(project_path, logger, log_file):
+def load_config(project_path: str, log_file="") -> dict | None:
     """ Load a json config file
-    :param path: full path
+
+    :param project_path: full path
+    :param log_file: log file
     :return: json data
     """
-    if os.path.exists(project_path + "/config/config.json"):
-        return cargar_json(open(project_path + "/config/config.json"))
-    else:
-        errorMsg(logger, 2, "Default configuration must be replaced", log_file)
+    full_path = f"{project_path}/config/config.json"
+    if os.path.exists(full_path):
+        return load_json(full_path)
+    error_msg(2, "Default configuration must be replaced", log_file)
 
 
-def guardar_json(path, data):
+def save_json(path: str, data: str) -> None:
     """ Write a json file
+
     :param path: full path
     :param data: data to write
     """
@@ -61,117 +113,106 @@ def guardar_json(path, data):
     f1.close()
 
 
-def getFatherPath(path):
+def get_father_path(path: str) -> str:
     """ Returns father absolute path
+
     :return: path as string
     """
     return os.path.dirname(os.path.dirname(path))
 
 
-def getProjetPath():
+def get_project_path() -> str:
     """ Returns the project absolute path
     PROJECT/src/src/cf.sh
+
     :return: path as string
     """
     if PROJECT_PATH != "":
         return PROJECT_PATH
-    else:
-        return os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    # Otra forma es usando os.path.dirname(os.path.abspath(sys.argv[0]))
+    return os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
-def getTime():
+def get_time() -> str:
     """ Returns a complete date as YYYY-MM-dd HH:mm
+
     :return: all date as string
     """
     return strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 
-def getDate():
+def get_date() -> str:
     """ Returns a complete date as YYYY-MM-dd
+
     :return: all date as string
     """
     return strftime("%Y-%m-%d", gmtime())
 
 
-def getHeadLine(level):
-    """ Returns log format headline
-    :return: string log format
-    """
-    return "[" + getTime() + "][" + level + "]"
-
-
-def isDate(cadena):
+def is_valid_date(cadena: str) -> bool:
     """ Check is the text recived is a rigth date
     :param cadena: datatime text (YYYY-MM-DD)
     :return: True or False
     """
-    if len(cadena) != 10:
-        return False
-
-    if cadena[4] != "-" or cadena[7] != "-":
+    anno = 0
+    mes = 0
+    dia = 0
+    if len(cadena) != 10 or (cadena[4] != "-" or cadena[7] != "-"):
         return False
 
     try:
         anno = int(cadena[0:4])
         mes = int(cadena[5:7])
         dia = int(cadena[8:10])
-    except:
+    except ValueError:
         return False
 
-    if mes > 12 or mes < 1:
+    is_correct_day = dia > monthrange(anno, mes)[1] or dia < 1
+    is_correct_month = mes > 12 or mes < 1
+    is_correct_year = anno < mes or anno < dia
+    if is_correct_day or is_correct_month or is_correct_year:
         return False
-    elif anno < mes or anno < dia:
-        return False
-    elif dia > monthrange(anno, mes)[1] or dia < 1:
-        return False
-    else:
-        return True
+    return True
 
 
-def printBanner(character, textList):
+def print_banner(characters: str, text_list: list) -> None:
     """ Print a simple banner
-    :param text: text to print
+    :param characters: characters to repeat
+    :param text_list: list to print
     """
     line_size = 0
-    for line in textList:
+    for line in text_list:
         if line_size < len(line):
             line_size = len(line)
 
-    print(character * (line_size + 4))
-    for line in textList:
+    print(characters * (line_size + 4))
+    for line in text_list:
         if len(line) == line_size:
-            print(character + " " + line + " " + character)
+            print(characters + " " + line + " " + characters)
         else:
             spaces = " " * (line_size - len(line) + 1)
-            print(character + " " + line + spaces + character)
-    print(character * (line_size + 4))
+            print(characters + " " + line + spaces + characters)
+    print(characters * (line_size + 4))
 
 
-def printMegaBanner(text):
-    """ Print a big banner
-    :param text: text to print
-    """
-    ascii_banner = pyfiglet.figlet_format(text)
-    print(ascii_banner)
-
-
-def printFileEncoded(nombre):
+def print_file_encoded(file_path: str) -> None:
     """ Print file with encoded text
-    :param nombre: file's URI
+    :param file_path: file's URI
     """
-    f1 = open(nombre, 'r')
-    linea = f1.readline()
-    while (len(linea) > 0):
-        nueva = ""
-        for pos in range(0, len(linea) - 1):
-            nueva = nueva + str(chr(ord(linea[pos]) + 1))
-        print(nueva)
+    with open(file_path, "r", encoding="utf-8") as f1:
         linea = f1.readline()
+        while len(linea) > 0:
+            nueva = ""
+            for pos in range(0, len(linea) - 1):
+                nueva = nueva + str(chr(ord(linea[pos]) + 1))
+            print(nueva)
+            linea = f1.readline()
 
 
-def getFiletName(location, extension=False):
+def get_file_name(location: str, extension=False) -> str:
     """ Returns file name not URI location
     :param location: URI of scritp
+    :param extension: bool
     :return: file name
     """
     spliter_point = '.'
@@ -186,75 +227,40 @@ def getFiletName(location, extension=False):
         else:
             for part2 in range(0, (parts - 1)):
                 name2 += name1.split(spliter_point)[part2]
-
     return name2
 
 
-def getFileLog(location):
+def get_file_log(location: str) -> str:
     """ Returns file name not URI location
     :param location: URI of scritp
     :return: file log name
     """
-    return getFiletName(location) + "_" + getDate() + ".log"
+    return f"{get_file_name(location)}_{get_date()}.log"
 
 
-def printLogFile(outputFile, msg):
-    """ Print log file
+def print_log_in_file(output_file: str, msg: str) -> None:
+    """ Print in log file
+
+    :param output_file: file to write data
+    :param msg: text to wirte
     """
     try:
-        printLogFile_file = open(outputFile, 'a')
-        printLogFile_file.write(msg + os.linesep)
-        printLogFile_file.close()
-    except:
-        print("Error writing in file: " + str(outputFile))
+        with open(output_file, "a", encoding="utf-8") as log_file:
+            log_file.write(msg + os.linesep)
+            log_file.close()
+    except FileExistsError:
+        print(f"Error writing in file: {output_file}")
 
 
-def infoMsg(logger, msg, outputFile=""):
-    """ Show a menssage text
-    :param msg: info menssage
-    :param outputFile: output file
-    """
-    logger.info(": " + msg)
-    if outputFile != "":
-        printLogFile(outputFile, getHeadLine("INFO") + ": " + msg)
-
-
-def warnMsg(logger, msg, outputFile=""):
-    """ Show a menssage text
-    :param msg: warning menssage
-    :param outputFile: output file
-    """
-    logger.warning(": " + msg)
-    if outputFile != "":
-        printLogFile(outputFile, getHeadLine("WARNING") + ": " + msg)
-
-
-def errorMsg(logger, num, msg, outputFile=""):
-    """ Show a menssage text and exits with output number
-    :param num: output number
-    :param msg: error menssage
-    :param outputFile: output file
-    """
-    logger.error("[" + str(num) + "]: " + msg)
-    if outputFile != "":
-        printLogFile(outputFile, getHeadLine("ERROR") + "[" + str(num) + "]: " + msg)
-    exit(num)
-
-
-def showScriptInfo(info):
+def show_script_info(info: dict) -> None:
     """ Show a basic info
     :param info: array with all info
     """
     print(SEPARATOR_1)
-    if "name" in info:
-        print("# Name            : " + info["name"])
-    if "location" in info:
-        print("# Location        : " + info["location"])
-    if "description" in info:
-        print("# Description     : " + info["description"])
-    if "Autor" in info:
-        print("# Autor           : " + info["Autor"])
-    print("# Execution_Date  : " + getTime())
-    if "calling" in info:
-        print("# Calling         : " + info["calling"])
+    print("# Name            : " + info["name"])
+    print("# Location        : " + info["location"])
+    print("# Description     : " + info["description"])
+    print("# Autor           : " + info["Autor"])
+    print("# Execution_Date  : " + get_time())
+    print("# Calling         : " + info["calling"])
     print(SEPARATOR_1)
