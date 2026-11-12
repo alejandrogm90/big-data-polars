@@ -114,3 +114,5 @@ if __name__ == '__main__':
         cf.info_msg(str(df_4), FILE_LOG)
         # Write the result to a CSV file
         #df_4.write_csv("data/iris_summary.csv")
+        # Write the result to a Parquet file
+        #df_4.write_parquet("data/iris_summary.parquet")
